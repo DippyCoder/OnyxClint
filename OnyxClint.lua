@@ -1,4 +1,75 @@
 -- =====================================================
+-- ONYX KEY SYSTEM (SINGLE KEY)
+-- =====================================================
+
+local Players = game:GetService("Players")
+local player = Players.LocalPlayer
+
+local MASTER_KEY = "ONYX-7GHT-92JK" -- <<< EINZIGER KEY
+local unlocked = false
+
+-- Key GUI
+local keyGui = Instance.new("ScreenGui", player.PlayerGui)
+keyGui.Name = "ONYX_KEY"
+keyGui.ResetOnSpawn = false
+
+local frameK = Instance.new("Frame", keyGui)
+frameK.Size = UDim2.fromOffset(320,200)
+frameK.Position = UDim2.fromScale(0.5,0.5)
+frameK.AnchorPoint = Vector2.new(0.5,0.5)
+frameK.BackgroundColor3 = Color3.fromRGB(10,10,20)
+frameK.BorderSizePixel = 0
+Instance.new("UICorner", frameK)
+
+local gradK = Instance.new("UIGradient", frameK)
+gradK.Color = ColorSequence.new{
+	ColorSequenceKeypoint.new(0, Color3.fromRGB(90,0,150)),
+	ColorSequenceKeypoint.new(1, Color3.fromRGB(0,140,255))
+}
+
+local strokeK = Instance.new("UIStroke", frameK)
+strokeK.Thickness = 3
+strokeK.Color = Color3.fromRGB(170,0,255)
+
+local titleK = Instance.new("TextLabel", frameK)
+titleK.Size = UDim2.new(1,0,0,40)
+titleK.BackgroundTransparency = 1
+titleK.Text = "ONYX ACCESS"
+titleK.Font = Enum.Font.GothamBlack
+titleK.TextSize = 22
+titleK.TextColor3 = Color3.new(1,1,1)
+
+local boxK = Instance.new("TextBox", frameK)
+boxK.Size = UDim2.fromOffset(260,36)
+boxK.Position = UDim2.fromOffset(30,70)
+boxK.PlaceholderText = "Enter Key"
+boxK.Text = ""
+boxK.BackgroundColor3 = Color3.fromRGB(20,20,35)
+boxK.TextColor3 = Color3.new(1,1,1)
+boxK.Font = Enum.Font.Gotham
+boxK.TextSize = 14
+Instance.new("UICorner", boxK)
+
+local btnK = Instance.new("TextButton", frameK)
+btnK.Size = UDim2.fromOffset(260,36)
+btnK.Position = UDim2.fromOffset(30,120)
+btnK.Text = "UNLOCK"
+btnK.Font = Enum.Font.GothamBold
+btnK.TextSize = 14
+btnK.TextColor3 = Color3.new(1,1,1)
+btnK.BackgroundColor3 = Color3.fromRGB(40,40,70)
+Instance.new("UICorner", btnK)
+
+btnK.MouseButton1Click:Connect(function()
+	if boxK.Text == MASTER_KEY then
+		unlocked = true
+		keyGui:Destroy()
+	end
+end)
+
+repeat task.wait() until unlocked
+
+-- =====================================================
 -- ONYX CLINT – GODMODE FIXED + GUI BIND UPGRADE
 -- =====================================================
 
