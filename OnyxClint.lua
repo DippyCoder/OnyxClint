@@ -1,5 +1,5 @@
 -- =====================================================
--- ONYX KEY SYSTEM (SINGLE KEY) MIT GETKEY BUTTON & KICK
+-- ONYX KEY SYSTEM (SINGLE KEY + GET KEY BUTTON)
 -- =====================================================
 
 local Players = game:GetService("Players")
@@ -31,6 +31,7 @@ local strokeK = Instance.new("UIStroke", frameK)
 strokeK.Thickness = 3
 strokeK.Color = Color3.fromRGB(170,0,255)
 
+-- Title
 local titleK = Instance.new("TextLabel", frameK)
 titleK.Size = UDim2.new(1,0,0,40)
 titleK.BackgroundTransparency = 1
@@ -39,6 +40,7 @@ titleK.Font = Enum.Font.GothamBlack
 titleK.TextSize = 22
 titleK.TextColor3 = Color3.new(1,1,1)
 
+-- Key Eingabe
 local boxK = Instance.new("TextBox", frameK)
 boxK.Size = UDim2.fromOffset(260,36)
 boxK.Position = UDim2.fromOffset(30,70)
@@ -50,6 +52,7 @@ boxK.Font = Enum.Font.Gotham
 boxK.TextSize = 14
 Instance.new("UICorner", boxK)
 
+-- Unlock Button
 local btnK = Instance.new("TextButton", frameK)
 btnK.Size = UDim2.fromOffset(260,36)
 btnK.Position = UDim2.fromOffset(30,120)
@@ -60,6 +63,7 @@ btnK.TextColor3 = Color3.new(1,1,1)
 btnK.BackgroundColor3 = Color3.fromRGB(40,40,70)
 Instance.new("UICorner", btnK)
 
+-- Get Key Button
 local getKeyBtn = Instance.new("TextButton", frameK)
 getKeyBtn.Size = UDim2.fromOffset(260,36)
 getKeyBtn.Position = UDim2.fromOffset(30,160)
@@ -67,28 +71,55 @@ getKeyBtn.Text = "GET KEY"
 getKeyBtn.Font = Enum.Font.GothamBold
 getKeyBtn.TextSize = 14
 getKeyBtn.TextColor3 = Color3.new(1,1,1)
-getKeyBtn.BackgroundColor3 = Color3.fromRGB(40,40,70)
+getKeyBtn.BackgroundColor3 = Color3.fromRGB(50,20,90)
 Instance.new("UICorner", getKeyBtn)
 
--- Klick-Funktion für GET KEY Button
-getKeyBtn.MouseButton1Click:Connect(function()
-	-- hier den Link einfügen
-	game:GetService("GuiService"):OpenBrowserWindow("https://link-hub.net/3243226/RrrLCDA8vw7r")
-end)
-
+-- Unlock Funktion
 btnK.MouseButton1Click:Connect(function()
 	if boxK.Text == MASTER_KEY then
 		unlocked = true
 		keyGui:Destroy()
 	else
-		player:Kick("Falscher Key! Zugriff verweigert.")
+		player:Kick("Falscher Key eingegeben!")
 	end
 end)
 
+-- Get Key Funktion
+getKeyBtn.MouseButton1Click:Connect(function()
+	local link = "https://link-hub.net/3243226/RrrLCDA8vw7r" -- hier deinen Link einfügen
+
+	-- Link in die Zwischenablage kopieren
+	pcall(function()
+		setclipboard(link)
+	end)
+
+	-- Popup erstellen
+	local popup = Instance.new("Frame", keyGui)
+	popup.Size = UDim2.fromOffset(200,50)
+	popup.Position = UDim2.fromScale(0.5,0.3)
+	popup.AnchorPoint = Vector2.new(0.5,0.5)
+	popup.BackgroundColor3 = Color3.fromRGB(30,30,50)
+	Instance.new("UICorner", popup)
+
+	local text = Instance.new("TextLabel", popup)
+	text.Size = UDim2.fromScale(1,1)
+	text.BackgroundTransparency = 1
+	text.TextColor3 = Color3.new(1,1,1)
+	text.Font = Enum.Font.GothamBold
+	text.TextSize = 16
+	text.Text = "Link kopiert!"
+
+	-- Popup nach 2 Sekunden entfernen
+	task.delay(2, function()
+		popup:Destroy()
+	end)
+end)
+
+-- Warten bis Key freigeschaltet
 repeat task.wait() until unlocked
 
 -- =====================================================
--- AB HIER KOMMT DEIN ONYX SCRIPT 1:1
+-- ONYX CLINT – GODMODE FIXED + GUI BIND UPGRADE
 -- =====================================================
 
 -- SERVICES
@@ -106,7 +137,7 @@ local Aimbot = false
 local Noclip = false
 local ESPEnabled = false
 local GodMode = false
-local AimTarget = "Body"
+local AimTarget = "Body" -- "Head" oder "Body"
 
 -- KEYBINDS
 local binds = {
@@ -115,7 +146,7 @@ local binds = {
 	Noclip = Enum.KeyCode.N,
 	ESP = Enum.KeyCode.V,
 	God = Enum.KeyCode.O,
-	AimToggle = Enum.KeyCode.N
+	AimToggle = Enum.KeyCode.N -- Kopf/Körper toggle
 }
 local waitingForBind = nil
 local waitingForBindFeature = nil
@@ -129,7 +160,9 @@ local PURPLE = Color3.fromRGB(170,0,255)
 local BORDER_COLOR = Color3.fromRGB(200,0,255)
 local borderValue = 0
 
+-- =====================================================
 -- CHARACTER
+-- =====================================================
 local function resetFly()
 	if bv then bv:Destroy() bv=nil end
 	if bg then bg:Destroy() bg=nil end
@@ -147,7 +180,9 @@ end
 player.CharacterAdded:Connect(onChar)
 if player.Character then onChar(player.Character) end
 
+-- =====================================================
 -- GUI
+-- =====================================================
 local gui = Instance.new("ScreenGui", player.PlayerGui)
 gui.Name = "ONYX_CLINT"
 gui.ResetOnSpawn = false
@@ -161,6 +196,7 @@ frame.Active = true
 frame.Draggable = true
 Instance.new("UICorner", frame)
 
+-- Animated border
 local border = Instance.new("UIStroke", frame)
 border.Thickness = 3
 border.Color = BORDER_COLOR
@@ -206,6 +242,7 @@ local nocBtn = button("Noclip ["..binds.Noclip.Name.."]",135)
 local espBtn = button("ESP (Box + Line) ["..binds.ESP.Name.."]",175)
 local godBtn = button("God Mode ["..binds.God.Name.."]",215)
 local aimToggleBtn = button("Aim Target ["..AimTarget.."] ["..binds.AimToggle.Name.."]",255)
+
 local bindChangeBtn = button("Change Selected Bind",300)
 
 -- Connect GUI clicks
@@ -223,12 +260,15 @@ bindChangeBtn.MouseButton1Click:Connect(function()
 	end
 end)
 
--- INPUT & MAIN LOOP
+-- =====================================================
+-- INPUT
+-- =====================================================
 UIS.InputBegan:Connect(function(input,gpe)
 	if gpe then return end
 
 	if waitingForBind=="bind" and waitingForBindFeature then
 		binds[waitingForBindFeature] = input.KeyCode
+		-- Update Button Text
 		if waitingForBindFeature=="Fly" then flyBtn.Text="Fly ["..input.KeyCode.Name.."]" end
 		if waitingForBindFeature=="Aimbot" then aimBtn.Text="Aimbot ["..input.KeyCode.Name.."]" end
 		if waitingForBindFeature=="Noclip" then nocBtn.Text="Noclip ["..input.KeyCode.Name.."]" end
@@ -241,6 +281,7 @@ UIS.InputBegan:Connect(function(input,gpe)
 		return
 	end
 
+	-- Toggle features with keybinds
 	if input.KeyCode == binds.Fly then Fly = not Fly end
 	if input.KeyCode == binds.Aimbot then Aimbot = not Aimbot end
 	if input.KeyCode == binds.Noclip then Noclip = not Noclip end
@@ -265,7 +306,9 @@ UIS.InputBegan:Connect(function(input,gpe)
 	end
 end)
 
+-- =====================================================
 -- ESP + HP BAR
+-- =====================================================
 local function clearESP()
 	for _,v in pairs(ESP) do
 		v.box:Destroy()
@@ -313,7 +356,9 @@ local function createESP(plr)
 	ESP[plr]={box=box,line=beam,hpBg=hpBg,hpFill=hpFill,hum=hum2,hrp=hrp}
 end
 
+-- =====================================================
 -- TARGET
+-- =====================================================
 local function getNearest()
 	local best,dist=nil,math.huge
 	for _,p in ipairs(Players:GetPlayers()) do
@@ -328,24 +373,30 @@ local function getNearest()
 	return best
 end
 
+-- =====================================================
 -- MAIN LOOP
+-- =====================================================
 RunService.RenderStepped:Connect(function()
 	if not root then return end
 
+	-- Animate border
 	borderValue = (tick()%2)/2
-	border.Color = Color3.fromHSV(0.83,borderValue,1)
+	border.Color = Color3.fromHSV(0.83,borderValue,1) -- lila pulsierend
 
+	-- GODMODE
 	if GodMode and hum then
 		hum.MaxHealth=1e9
 		hum.Health=hum.MaxHealth
 	end
 
+	-- NOCLIP
 	if Noclip then
 		for _,v in ipairs(char:GetDescendants()) do
 			if v:IsA("BasePart") then v.CanCollide=false end
 		end
 	end
 
+	-- FLY
 	if Fly and bv and bg then
 		local cam=camera.CFrame
 		local dir=Vector3.zero
@@ -360,6 +411,7 @@ RunService.RenderStepped:Connect(function()
 		bg.CFrame=cam
 	end
 
+	-- AIMBOT
 	if Aimbot then
 		local t=getNearest()
 		if t then
@@ -367,6 +419,7 @@ RunService.RenderStepped:Connect(function()
 		end
 	end
 
+	-- ESP UPDATE
 	if not ESPEnabled then clearESP()
 	else
 		for _,p in ipairs(Players:GetPlayers()) do
