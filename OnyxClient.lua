@@ -1,13 +1,19 @@
 -- =====================================================
--- ONYX KEY SYSTEM (SINGLE KEY + GET KEY BUTTON)
+-- ONYX KEY SYSTEM (LOCAL + XENO HTTP)
 -- =====================================================
 
 local Players = game:GetService("Players")
-local HttpService = game:GetService("HttpService") -- added for API requests
 local player = Players.LocalPlayer
+local HttpService = game:GetService("HttpService") -- für JSONDecode
 
--- Removed MASTER_KEY
 local unlocked = false
+
+-- Prüfen, ob Executor HTTP unterstützt
+local request = request or http_request or syn.request
+if not request then
+	warn("HTTP nicht verfügbar – Script abgebrochen")
+	return
+end
 
 -- Key GUI
 local keyGui = Instance.new("ScreenGui", player.PlayerGui)
@@ -75,28 +81,37 @@ getKeyBtn.TextColor3 = Color3.new(1,1,1)
 getKeyBtn.BackgroundColor3 = Color3.fromRGB(50,20,90)
 Instance.new("UICorner", getKeyBtn)
 
--- URL of your key validation API
+-- URL deiner Key-API
 local API_URL = "https://onyx-webkeys.vercel.app/api/"
 
--- Unlock Funktion (changed to call API)
+-- Unlock Funktion (Xeno-kompatibel)
 btnK.MouseButton1Click:Connect(function()
-    local inputKey = boxK.Text
+	local inputKey = boxK.Text
+	if inputKey == "" then return end
 
-    local success, response = pcall(function()
-        return HttpService:GetAsync(API_URL .. inputKey)
-    end)
+	local success, response = pcall(function()
+		return request({
+			Url = API_URL .. inputKey,
+			Method = "GET"
+		})
+	end)
 
-    if success then
-        local data = HttpService:JSONDecode(response)
-        if data.valid then
-            unlocked = true
-            keyGui:Destroy()
-        else
-            player:Kick("Falscher Key eingegeben!")
-        end
-    else
-        player:Kick("Fehler beim Überprüfen des Keys!")
-    end
+	if not success or not response or not response.Body then
+		player:Kick("Fehler beim Überprüfen des Keys!")
+		return
+	end
+
+	local data
+	pcall(function()
+		data = HttpService:JSONDecode(response.Body)
+	end)
+
+	if data and data.valid == true then
+		unlocked = true
+		keyGui:Destroy()
+	else
+		player:Kick("Falscher Key eingegeben!")
+	end
 end)
 
 -- Get Key Funktion (unchanged)
