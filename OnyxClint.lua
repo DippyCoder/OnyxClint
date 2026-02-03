@@ -146,7 +146,7 @@ local binds = {
 	Noclip = Enum.KeyCode.N,
 	ESP = Enum.KeyCode.V,
 	God = Enum.KeyCode.O,
-	AimToggle = Enum.KeyCode.N -- Kopf/Körper toggle
+	AimToggle = Enum.KeyCode.M -- Kopf/Körper toggle
 }
 local waitingForBind = nil
 local waitingForBindFeature = nil
