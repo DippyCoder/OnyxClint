@@ -3,9 +3,10 @@
 -- =====================================================
 
 local Players = game:GetService("Players")
+local HttpService = game:GetService("HttpService") -- added for API requests
 local player = Players.LocalPlayer
 
-local MASTER_KEY = "ONYX-7GHT-92JK" -- <<< EINZIGER KEY
+-- Removed MASTER_KEY
 local unlocked = false
 
 -- Key GUI
@@ -74,24 +75,40 @@ getKeyBtn.TextColor3 = Color3.new(1,1,1)
 getKeyBtn.BackgroundColor3 = Color3.fromRGB(50,20,90)
 Instance.new("UICorner", getKeyBtn)
 
--- Unlock Funktion
+-- URL of your key validation API
+local API_URL = "https://onyx-webkeys.vercel.app/api/"
+
+-- Unlock Funktion (changed to call API)
 btnK.MouseButton1Click:Connect(function()
-    if boxK.Text == MASTER_KEY then
-        unlocked = true
-        keyGui:Destroy()
+    local inputKey = boxK.Text
+
+    local success, response = pcall(function()
+        return HttpService:GetAsync(API_URL .. inputKey)
+    end)
+
+    if success then
+        local data = HttpService:JSONDecode(response)
+        if data.valid then
+            unlocked = true
+            keyGui:Destroy()
+        else
+            player:Kick("Falscher Key eingegeben!")
+        end
     else
-        player:Kick("Falscher Key eingegeben!")
+        player:Kick("Fehler beim Überprüfen des Keys!")
     end
 end)
 
--- Get Key Funktion
-getKeyBtn.MouseButton1Click:Connect(function()
-    local link = "https://link-hub.net/3243226/RrrLCDA8vw7r" -- hier deinen Link einfügen
+-- Get Key Funktion (unchanged)
+--getKeyBtn.MouseButton1Click:Connect(function()
+--    local link = "https://link-hub.net/3243226/RrrLCDA8vw7r" -- hier deinen Link einfügen
+--
+--    -- Link in die Zwischenablage kopieren
+--    pcall(function()
+--        setclipboard(link)
+--    end)
+--end)
 
-    -- Link in die Zwischenablage kopieren
-    pcall(function()
-        setclipboard(link)
-    end)
 
     -- Popup erstellen
     local popup = Instance.new("Frame", keyGui)
